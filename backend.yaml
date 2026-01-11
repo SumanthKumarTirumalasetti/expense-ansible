@@ -26,6 +26,7 @@
     - name: Create a directory
       ansible.builtin.file:
         path: /app
+        state: directory
       
     - name: download package
       ansible.builtin.get_url:
