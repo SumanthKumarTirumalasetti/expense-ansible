@@ -4,6 +4,12 @@
   vars:
     mysql_root_password: ExpenseApp@1
   tasks:
+    - name: install pip
+      ansible.builtin.pip:
+        name:
+          - PyMySQL
+        executable: pip 3.9
+
     - name: Ensure the MySQL server package is installed
       ansible.builtin.package:
         name: mysql-server
