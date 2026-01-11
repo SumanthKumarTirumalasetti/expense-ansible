@@ -1,0 +1,70 @@
+- name: backend
+  hosts: backend
+  become: yes
+  vars:
+    mysql: mysql.devopspractice.help
+    mysql_root_password: ExpenseApp@1
+  tasks:
+    - name: disable nodejs
+      ansible.builtin.command: "dnf module disable nodejs -y"
+
+    - name: enable nodejs
+      ansible.builtin.command: "dnf module enable nodejs:20 -y"
+    
+    - name: install nodejs and mysql
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - nodejs
+        - mysql
+    
+    - name: user add
+      ansible.builtin.user:
+        name: expense
+
+    - name: Create a directory
+      ansible.builtin.file:
+        path: /app
+      
+    - name: download package
+      ansible.builtin.get_url:
+        url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip
+        dest: /tmp/backend.zip
+
+    - name: unzip backend code
+      ansible.builtin.unarchive:
+        src: /tmp/backend.zip
+        dest: /app
+        remote_src: yes
+
+    - name: npm package install
+      community.general.npm:
+        path: /app
+
+    - name: copy file
+      ansible.builtin.copy:
+        src: /home/ec2-user/expense-ansible/backend.service
+        dest: /etc/systemd/system
+
+    - name: backend daemon reload
+      ansible.builtin.systemd:
+        daemon_reload: true
+        state: started
+        enabled: true
+
+    - name: Connect to mysql server
+      community.mysql.mysql_info:
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        login_host: mysql.devopspractice.help
+      register: mysql_info
+      ignore_errors: true
+    
+    - name: print output
+      ansible.builtin.debug:
+        msg: "{{ mysql_info }}"
+
+    - name: set root login_password
+      ansible.builtin.command: "mysql -h '{{ mysql }}' -uroot -pExpenseApp@1 < /app/schema/backend.sql"
+      when: mysql_info.failed is false
