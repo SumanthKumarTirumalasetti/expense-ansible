@@ -67,5 +67,5 @@
         msg: "{{ mysql_info }}"
 
     - name: set root login_password
-      ansible.builtin.command: "mysql -h '{{ mysql }}' -uroot -pExpenseApp@1 < /app/schema/backend.sql"
+      ansible.builtin.command: "mysql -h '{{ mysql }}' -uroot -p'{{ mysql_root_password }}' < /app/schema/backend.sql"
       when: mysql_info.failed is false
