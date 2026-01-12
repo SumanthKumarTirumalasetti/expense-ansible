@@ -39,7 +39,7 @@
     - name: copy file
       ansible.builtin.copy:
         src: /home/ec2-user/expense-ansible/expense.conf
-        dest: /etc/systemd/system/expense.conf
+        dest: /etc/nginx/default.d/expense.conf
 
     - name: restart nginx
       ansible.builtin.service:
