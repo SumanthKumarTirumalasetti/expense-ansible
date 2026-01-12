@@ -16,7 +16,7 @@
     - name: Remove the directory contents
       ansible.builtin.file:
         path: /usr/share/nginx/html/
-        state: abscent
+        state: absent
     
     - name: download package
       ansible.builtin.get_url:
