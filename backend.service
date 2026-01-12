@@ -3,7 +3,7 @@ Description = Backend Service
 
 [Service]
 User=expense
-Environment=DB_HOST="mysql.devopspractice.help"
+Environment=DB_HOST=mysql.devopspractice.help
 ExecStart=/bin/node /app/index.js
 SyslogIdentifier=backend
 
