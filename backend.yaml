@@ -8,7 +8,7 @@
     - name: Disable default nodejs
       ansible.builtin.package:
         name: nodejs
-        state: abscent
+        state: removed
     
     - name: Enable nodejs 20
       ansible.builtin.package:
