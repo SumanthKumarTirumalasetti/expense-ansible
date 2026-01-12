@@ -59,25 +59,25 @@
         src: /home/ec2-user/expense-ansible/backend.service
         dest: /etc/systemd/system/backend.service
 
+    - name: Connect to mysql server
+      community.mysql.mysql_info:
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        login_host: mysql.devopspractice.help
+      register: mysql_info
+      ignore_errors: true
+    
+    - name: print output
+      ansible.builtin.debug:
+        msg: "{{ mysql_info }}"
+
+    - name: set root login_password
+      ansible.builtin.command: "mysql -h '{{ mysql }}' -uroot -p'{{ mysql_root_password }}' < /app/schema/backend.sql"
+      when: mysql_info.failed is false
+
     - name: backend daemon reload
       ansible.builtin.systemd:
-        name: backend
-        daemon_reload: true
-        state: restarted
-        enabled: true
-
-    # - name: Connect to mysql server
-    #   community.mysql.mysql_info:
-    #     login_user: root
-    #     login_password: "{{ mysql_root_password }}"
-    #     login_host: mysql.devopspractice.help
-    #   register: mysql_info
-    #   ignore_errors: true
-    
-    # - name: print output
-    #   ansible.builtin.debug:
-    #     msg: "{{ mysql_info }}"
-
-    # - name: set root login_password
-    #   ansible.builtin.command: "mysql -h '{{ mysql }}' -uroot -p'{{ mysql_root_password }}' < /app/schema/backend.sql"
-    #   when: mysql_info.failed is false
+          name: backend
+          daemon_reload: true
+          state: restarted
+          enabled: true
