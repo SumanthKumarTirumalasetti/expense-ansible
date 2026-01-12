@@ -13,10 +13,17 @@
         state: started
         enabled: true
 
-    - name: Remove the directory contents
+    - name: Find all files in directory
+      ansible.builtin.find:
+        paths: /usr/share/nginx/html/
+        file_type: file
+      register: files_to_delete
+
+    - name: Delete files
       ansible.builtin.file:
-        path: /usr/share/nginx/html/
+        path: "{{ item.path }}"
         state: absent
+      loop: "{{ files_to_delete.files }}"
     
     - name: download package
       ansible.builtin.get_url:
