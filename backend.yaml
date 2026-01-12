@@ -5,6 +5,12 @@
     mysql: mysql.devopspractice.help
     mysql_root_password: ExpenseApp@1
   tasks:
+    - name: install pip
+      ansible.builtin.pip:
+        name:
+          - PyMySQL
+        executable: pip3.9
+
     - name: Disable default nodejs
       ansible.builtin.package:
         name: nodejs
