@@ -68,19 +68,13 @@
 
     - name: Connect to mysql server
       community.mysql.mysql_info:
+        state: import
+        name: all
         login_user: root
         login_password: "{{ mysql_root_password }}"
-        login_host: mysql.devopspractice.help
-      register: mysql_info
-      ignore_errors: true
-    
-    - name: print output
-      ansible.builtin.debug:
-        msg: "{{ mysql_info }}"
-
-    - name: set root login_password
-      ansible.builtin.command: "mysql -h '{{ mysql }}' -uroot -p'{{ mysql_root_password }}' < /app/schema/backend.sql"
-      when: mysql_info.failed is false
+        login_host: "{{ mysql }}"
+        target: /app/schema/backend.sql
+  
 
     - name: backend daemon reload
       ansible.builtin.systemd:
